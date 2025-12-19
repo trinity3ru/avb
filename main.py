@@ -68,7 +68,11 @@ SERVER_PORT = os.getenv("SERVER_PORT", "8080")
 class ShortenRequest(BaseModel):
     original_url: str
 
-app = FastAPI()
+app = FastAPI(
+    title="Shorten Url API",
+    description="Test API for shortening URLs",
+    version="1.0.1"
+)
 
  
 

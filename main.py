@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, HttpUrl
 import httpx
+import uvicorn
 
 from dotenv import load_dotenv
 import os
@@ -21,11 +22,12 @@ def init_db():
     conn.commit()
     conn.close()
 
-def generate_short_id(length: int = 6)->str:
+def generate_short_id(length: int = 8)->str:
     short_id = ''.join(random.choices(string.ascii_letters + string.digits, k=length))
     return short_id
 
 def save_url(original_url: str)->str:
+    """Save unique short_id into DB and return short_id"""
     while True:
         short_id = generate_short_id()
         try:
@@ -43,7 +45,7 @@ def save_url(original_url: str)->str:
   
 
 def get_url (short_url: str):
-     
+        """Get original url from short_id""" 
         try:
             conn = get_connection()
             cursor = conn.cursor()
@@ -63,7 +65,7 @@ def get_url (short_url: str):
 load_dotenv()
 
 SERVER_HOST = os.getenv("SERVER_HOST", "127.0.0.1")
-SERVER_PORT = os.getenv("SERVER_PORT", "8080")
+SERVER_PORT = int(os.getenv("SERVER_PORT", 8080))
 
 class ShortenRequest(BaseModel):
     original_url: str
@@ -71,7 +73,7 @@ class ShortenRequest(BaseModel):
 app = FastAPI(
     title="Shorten Url API",
     description="Test API for shortening URLs",
-    version="1.0.1"
+    version="1.0.2"
 )
 
  
@@ -81,10 +83,11 @@ app = FastAPI(
 def shorten_url(data: ShortenRequest):
     short_id = save_url(data.original_url)
     return {"short_id":short_id, "original_url":data.original_url}
-
+ 
 @app.get("/async-fetch")
 async def async_fetch(url: HttpUrl = Query(...)):
-    """Test endpoint for async fetch"""
+    """Test endpoint for async fetch
+    Make get request to url and return status code and body"""
     async with httpx.AsyncClient(timeout=5.0) as client:
         r = await client.get(str(url))
     return {"status_code": r.status_code, "body": r.text}
@@ -99,6 +102,12 @@ def get_original(short_url:str):
     
     
       
+# @app.on_event("startup")
+# def on_startup():
+if __name__ == "__main__":
+    uvicorn.run("main:app",host=SERVER_HOST, port=SERVER_PORT)
+     
+
 @app.on_event("startup")
 def on_startup():
     init_db()

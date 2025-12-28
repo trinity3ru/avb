@@ -1,0 +1,16 @@
+# Web Framework
+fastapi==0.115.6
+
+# ASGI Server
+uvicorn[standard]==0.34.0
+
+# Database
+sqlalchemy[asyncio]==2.0.36
+aiosqlite==0.20.0
+
+# HTTP Client
+httpx==0.28.1
+
+# Data Validation
+pydantic==2.10.4
+pydantic-settings==2.7.0

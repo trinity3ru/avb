@@ -1,5 +1,6 @@
 from pydantic import BaseModel, HttpUrl, ConfigDict
 
+
 class ShortenRequest(BaseModel):
     url: HttpUrl
 

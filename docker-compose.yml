@@ -1,0 +1,16 @@
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    
+    environment:
+      - DATABASE_URL=sqlite+aiosqlite:///urls.db
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8000
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload

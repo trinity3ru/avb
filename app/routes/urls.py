@@ -8,15 +8,15 @@ from schemas import ShortenRequest
 
 from database import SessionDep
 
-router = APIRouter(
-    prefix="/",
-    tags=["url"]
-)
+router = APIRouter(prefix="", tags=["url"])
+
 
 @router.post("/", status_code=201)
 async def shorten_url(data: ShortenRequest, session: SessionDep):
     short_id = await save_url(data.url, session)
-    return {"short_id":short_id}
+    return {"short_id": short_id}
+
+
 @router.get("/async-fetch")
 async def async_fetch(url: HttpUrl = Query(...)):
     """Test endpoint for async fetch
@@ -25,8 +25,9 @@ async def async_fetch(url: HttpUrl = Query(...)):
         r = await client.get(str(url))
     return {"status_code": r.status_code, "body": r.text}
 
+
 @router.get("/{short_url}", status_code=307)
-async def get_original(short_url:str, session: SessionDep):
+async def get_original(short_url: str, session: SessionDep):
     origin_url = await get_url(short_url, session)
     if origin_url is None:
         raise HTTPException(status_code=404, detail="URL not found")

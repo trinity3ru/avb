@@ -33,7 +33,7 @@ Create a short ID for a URL.
 ### 2. `GET /{short_id}` - Redirect to Original URL
 Redirects to the original URL.
 
-**Example:** `http://127.0.0.1:8080/Ab12Cd34`
+**Example:** `http://127.0.0.1:8000/Ab12Cd34`
 
 **Response:** HTTP 307 redirect to original URL
 
@@ -116,7 +116,7 @@ pip install -r requirements.txt
 ### Development mode
 
 ```bash
-uvicorn main:app --host 127.0.0.1 --port 8080 --reload
+uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
 ### Using Python directly
@@ -125,12 +125,12 @@ uvicorn main:app --host 127.0.0.1 --port 8080 --reload
 python main.py
 ```
 
-The API will be available at: `http://127.0.0.1:8080`
+The API will be available at: `http://127.0.0.1:8000`
 
 ### Interactive API Documentation
 
-- **Swagger UI**: `http://127.0.0.1:8080/docs`
-- **ReDoc**: `http://127.0.0.1:8080/redoc`
+- **Swagger UI**: `http://127.0.0.1:8000/docs`
+- **ReDoc**: `http://127.0.0.1:8000/redoc`
 
 ## Testing Endpoints
 
@@ -138,19 +138,19 @@ The API will be available at: `http://127.0.0.1:8080`
 
 **1. Shorten a URL:**
 ```bash
-curl -X POST "http://127.0.0.1:8080/" \
+curl -X POST "http://127.0.0.1:8000/" \
   -H "Content-Type: application/json" \
   -d '{"url": "https://example.com"}'
 ```
 
 **2. Redirect to original URL:**
 ```bash
-curl -L "http://127.0.0.1:8080/Ab12Cd34"
+curl -L "http://127.0.0.1:8000/Ab12Cd34"
 ```
 
 **3. Test async fetch:**
 ```bash
-curl "http://127.0.0.1:8080/async-fetch?url=https://example.com"
+curl "http://127.0.0.1:8000/async-fetch?url=https://example.com"
 ```
 
 ### Using PowerShell
@@ -158,32 +158,32 @@ curl "http://127.0.0.1:8080/async-fetch?url=https://example.com"
 **1. Shorten a URL:**
 ```powershell
 Invoke-RestMethod -Method Post `
-  -Uri "http://127.0.0.1:8080/" `
+  -Uri "http://127.0.0.1:8000/" `
   -ContentType "application/json" `
   -Body '{"url":"https://example.com"}'
 ```
 
 **2. Test redirect:**
 ```powershell
-Invoke-WebRequest -Uri "http://127.0.0.1:8080/Ab12Cd34" -MaximumRedirection 0
+Invoke-WebRequest -Uri "http://127.0.0.1:8000/Ab12Cd34" -MaximumRedirection 0
 ```
 
 **3. Test async fetch:**
 ```powershell
-Invoke-RestMethod -Uri "http://127.0.0.1:8080/async-fetch?url=https://example.com"
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/async-fetch?url=https://example.com"
 ```
 
 ### Using HTTPie
 
 ```bash
 # Shorten URL
-http POST http://127.0.0.1:8080/ url=https://example.com
+http POST http://127.0.0.1:8000/ url=https://example.com
 
 # Get redirect
-http GET http://127.0.0.1:8080/Ab12Cd34
+http GET http://127.0.0.1:8000/Ab12Cd34
 
 # Async fetch
-http GET http://127.0.0.1:8080/async-fetch url==https://example.com
+http GET http://127.0.0.1:8000/async-fetch url==https://example.com
 ```
 
 ## Database
@@ -208,7 +208,7 @@ Configuration is stored in `config.py`:
 
 ```python
 SERVER_HOST = "127.0.0.1"
-SERVER_PORT = 8080
+SERVER_PORT = 8000
 ```
 
 ## Technical Stack

@@ -2,6 +2,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import String
 from database import Model
 
+
 class Url(Model):
     __tablename__ = "urls"
 

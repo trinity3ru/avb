@@ -25,9 +25,12 @@ env/
 .vscode/
 .idea/
 
-# Documentation  
+# Documentation
 README.md
 
-# Tests  
+# Tests
 tests/
 *_test.py
+
+# Alembic generated migrations will be excluded, but structure is needed
+alembic/versions/__pycache__/

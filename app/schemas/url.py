@@ -1,4 +1,4 @@
-from pydantic import BaseModel, HttpUrl, ConfigDict
+from pydantic import BaseModel, ConfigDict, HttpUrl
 
 
 class ShortenRequest(BaseModel):

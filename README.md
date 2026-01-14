@@ -79,50 +79,98 @@ app/
 
 ## Requirements
 
-- Python 3.10+
+- Python 3.11+
 - SQLite (bundled with Python)
+- Docker (optional, recommended)
 
 ## Installation
 
-### 1. Clone the repository
+### Option 1: Docker (Recommended)
+
+#### Development
 
 ```bash
-cd app
+# Copy environment template
+cp .env.example .env
+
+# Build and run with docker-compose
+docker-compose up --build
+
+# The API will be available at: http://127.0.0.1:8000
 ```
 
-### 2. Create virtual environment
+#### Production
+
+```bash
+# Copy and configure environment
+cp .env.example .env
+# Edit .env with production settings
+
+# Build and run production version
+docker-compose -f docker-compose.prod.yml up -d --build
+```
+
+### Option 2: Local Setup
+
+#### 1. Clone the repository
+
+```bash
+git clone <repository-url>
+cd AVB
+```
+
+#### 2. Create virtual environment
 
 **Windows (PowerShell):**
 ```powershell
-python -m venv venv
-.\venv\Scripts\Activate.ps1
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 ```
 
 **Linux/macOS:**
 ```bash
-python3 -m venv venv
-source venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-### 3. Install dependencies
+#### 3. Install dependencies
 
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-## Running the Application
-
-### Development mode
+#### 4. Configure environment
 
 ```bash
+# Copy environment template
+cp .env.example .env
+
+# Edit .env if needed
+```
+
+#### 5. Run database migrations
+
+```bash
+# Initialize database with Alembic
+alembic upgrade head
+```
+
+## Running the Application
+
+### Development mode (local)
+
+```bash
+# From project root
+cd app
 uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
 ### Using Python directly
 
 ```bash
-python main.py
+cd app
+python -m uvicorn main:app --host 127.0.0.1 --port 8000
 ```
 
 The API will be available at: `http://127.0.0.1:8000`
@@ -190,8 +238,8 @@ http GET http://127.0.0.1:8000/async-fetch url==https://example.com
 
 The application uses **SQLite** with **async support** via `aiosqlite`.
 
-- Database file: `urls.db` (created automatically on first run)
-- Tables are created automatically using SQLAlchemy migrations
+- Database file: `urls.db` (or configured path in `.env`)
+- Schema management via **Alembic migrations**
 
 ### Database Schema
 
@@ -202,14 +250,39 @@ The application uses **SQLite** with **async support** via `aiosqlite`.
 | url | VARCHAR(255) | Original URL |
 | short_id | VARCHAR(255) | Unique short identifier (indexed) |
 
+### Alembic Migrations
+
+```bash
+# Create a new migration
+alembic revision --autogenerate -m "description"
+
+# Apply migrations
+alembic upgrade head
+
+# Rollback one migration
+alembic downgrade -1
+
+# Show current revision
+alembic current
+
+# Show migration history
+alembic history
+```
+
 ## Configuration
 
-Configuration is stored in `config.py`:
+Configuration is managed via **environment variables** (`.env` file):
 
-```python
-SERVER_HOST = "127.0.0.1"
-SERVER_PORT = 8000
+```bash
+# Server Configuration
+SERVER_HOST=127.0.0.1
+SERVER_PORT=8000
+
+# Database Configuration
+DATABASE_URL=sqlite+aiosqlite:///urls.db
 ```
+
+See [.env.example](.env.example) for all available options.
 
 ## Technical Stack
 
@@ -217,8 +290,11 @@ SERVER_PORT = 8000
 - **Uvicorn** `0.34.0` - ASGI server
 - **SQLAlchemy** `2.0.36` - Async ORM
 - **aiosqlite** `0.20.0` - Async SQLite driver
+- **Alembic** `1.14.0` - Database migrations
 - **Pydantic** `2.10.4` - Data validation
 - **httpx** `0.28.1` - Async HTTP client
+- **Ruff** `0.8.5` - Code formatter and linter
+- **Docker** - Containerization
 
 ## Development
 
@@ -238,8 +314,42 @@ The project follows **clean architecture** principles:
 - ✅ Type hints everywhere
 - ✅ Dependency injection with FastAPI
 - ✅ Automatic API documentation
-- ✅ Database session management
+- ✅ Database migrations with Alembic
+- ✅ Docker containerization
+- ✅ Environment-based configuration
+- ✅ Code quality with Ruff
 - ✅ Error handling with proper HTTP status codes
+
+### Code Quality
+
+```bash
+# Check code with ruff
+ruff check app/
+
+# Auto-fix issues
+ruff check --fix app/
+
+# Format code
+ruff format app/
+```
+
+### Docker Commands
+
+```bash
+# Development
+docker-compose up --build          # Build and start
+docker-compose down                # Stop containers
+docker-compose logs -f app         # View logs
+
+# Production
+docker-compose -f docker-compose.prod.yml up -d --build
+docker-compose -f docker-compose.prod.yml down
+docker-compose -f docker-compose.prod.yml logs -f app
+
+# Database migrations in Docker
+docker-compose exec app alembic upgrade head
+docker-compose exec app alembic revision --autogenerate -m "migration name"
+```
 
 ## Error Handling
 

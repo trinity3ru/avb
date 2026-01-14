@@ -3,19 +3,21 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    restart: unless-stopped
     ports:
       - "8000:8000"
     volumes:
-      - ./app:/app/app
-      - ./alembic:/app/alembic
-      - ./alembic.ini:/app/alembic.ini
       - app-data:/app/data
     environment:
       - DATABASE_URL=sqlite+aiosqlite:///data/urls.db
       - SERVER_HOST=0.0.0.0
       - SERVER_PORT=8000
-    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
-    user: "1000:1000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/docs')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 volumes:
   app-data:

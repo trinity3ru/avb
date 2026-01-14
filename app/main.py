@@ -1,19 +1,20 @@
-from fastapi import FastAPI
-import uvicorn
 from contextlib import asynccontextmanager
 
-import config
+import uvicorn
+from database import engine
+from fastapi import FastAPI
 from routes.urls import router as urls_router
-from database import engine, Model
+
+from . import config
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async with engine.begin() as conn:
-        await conn.run_sync(Model.metadata.create_all)
-    print("BD is ready")
+    # Database tables are created via Alembic migrations
+    print("DB is ready")
     yield
-    print("BD is closed")
+    await engine.dispose()
+    print("DB is closed")
 
 
 app = FastAPI(

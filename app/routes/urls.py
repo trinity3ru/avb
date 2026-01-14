@@ -1,12 +1,12 @@
+from typing import Annotated
+
+import httpx
+from database import SessionDep
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import RedirectResponse
 from pydantic import HttpUrl
-import httpx
-
-from services.url_service import save_url, get_url
 from schemas import ShortenRequest
-
-from database import SessionDep
+from services.url_service import get_url, save_url
 
 router = APIRouter(prefix="", tags=["url"])
 
@@ -18,7 +18,7 @@ async def shorten_url(data: ShortenRequest, session: SessionDep):
 
 
 @router.get("/async-fetch")
-async def async_fetch(url: HttpUrl = Query(...)):
+async def async_fetch(url: Annotated[HttpUrl, Query()]):
     """Test endpoint for async fetch
     Make get request to url and return status code and body"""
     async with httpx.AsyncClient(timeout=5.0) as client:

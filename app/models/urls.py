@@ -1,6 +1,6 @@
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String
 from database import Model
+from sqlalchemy import String
+from sqlalchemy.orm import Mapped, mapped_column
 
 
 class Url(Model):
